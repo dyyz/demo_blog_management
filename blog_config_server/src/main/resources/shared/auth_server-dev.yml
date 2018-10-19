@@ -1,0 +1,35 @@
+server:
+  port: 8763
+
+spring:
+  security:
+    user:
+      name: auth
+      # 由于添加了@Bean passwordEncode，所有这里必须是{密文类型}密文
+      password: auth
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/test_sec_oauth?useUnicode=true&characterEncoding=utf8&characterSetResults=utf8
+    username: root
+    password: 123456
+  redis:
+    host: localhost
+    database: 0
+    port: 6379
+    password: 
+
+security:
+  oauth2:
+    client:
+      client-id: client1
+      client-secret: client1
+      grant-type: authorization_code, refresh_token
+      #60*60*12 默认 12 小时有效
+      access-token-validity-seconds: 43200
+      #60*60*24*7 默认 30 天有效
+      refresh-token-validity-seconds: 604800
+      
