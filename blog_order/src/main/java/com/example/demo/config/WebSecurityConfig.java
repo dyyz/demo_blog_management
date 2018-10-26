@@ -1,35 +1,27 @@
 package com.example.demo.config;
 
+import org.springframework.boot.autoconfigure.security.oauth2.client.EnableOAuth2Sso;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2ClientContext;
+import org.springframework.security.oauth2.client.OAuth2RestOperations;
+import org.springframework.security.oauth2.client.OAuth2RestTemplate;
+import org.springframework.security.oauth2.client.resource.OAuth2ProtectedResourceDetails;
 
-@EnableWebSecurity
+@EnableOAuth2Sso
 @Configuration
-@Order(1)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+	@Override
+    public void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+        super.configure(http);
+    }
 	
 	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.inMemoryAuthentication().passwordEncoder(passwordEncoder()).withUser("order").password(passwordEncoder().encode("order")).roles("order");
-	}
-	
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-
-		http
-			.csrf().disable();
-		super.configure(http);
+	public OAuth2RestOperations restOperations(OAuth2ProtectedResourceDetails resource, OAuth2ClientContext context) {
+		return new OAuth2RestTemplate(resource, context);
 	}
 }
